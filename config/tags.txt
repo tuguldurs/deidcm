@@ -1,0 +1,11 @@
+#
+# List of standard DICOM tag names to be filtered
+#
+PatientName
+PatientAge
+PatientSex
+PatientBirthDate
+InstitutionName
+InstitutionAddress
+AccessionNumber
+StudyDate
