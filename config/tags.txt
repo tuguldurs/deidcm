@@ -4,8 +4,16 @@
 PatientName
 PatientAge
 PatientSex
+PatientID
 PatientBirthDate
+Occupation
 InstitutionName
 InstitutionAddress
+InstitutionalDepartmentName
+StationName
 AccessionNumber
+StudyID
 StudyDate
+SeriesDate
+PerformingPhysicianName
+ReferringPhysicianName
