@@ -17,10 +17,27 @@ log = logging.getLogger(__name__)
 class Validator:
 	"""Checks the item from input directory to determine if it is/has DICOM data.
 
+	Supports following:
+	 - plain or compressed individual DICOM files (does not need to have .dcm extension)
+	 - compressed study/series with or without DICOMDIR and/or viewer executables
+	 - plain study/series directories
+
+	Unsupported:
+	 - if for some reason the decompressed dir contains compressed content
+
+	Attributes
+	----------
+	path: Path
+		Path to input directory item.
+	dir: bool
+		Whether item is a directory.
+	compressed: bool
+		Whether item is a compressed file.
+
 	Methods
 	-------
-	check: ...
-		...
+	check()
+		Evaluates input directory item. 
 	"""
 	def __init__(self, item_path: Path) -> None:
 		self.path = item_path
@@ -29,7 +46,11 @@ class Validator:
 		self.compressed = self._get_compressed()
 
 	def _get_compressed(self) -> bool:
-		"""Checks if item is a compressed file."""
+		"""Checks if item is a compressed file.
+
+		ReadError is raised when its not a compressed file.
+		ValueError should raise if it does not contain any of the supported extensions.
+		"""
 		if self.dir:
 			return False
 		try:
@@ -39,14 +60,14 @@ class Validator:
 		except (shutil.ReadError, ValueError):
 			return False
 
-	def _check_file_dicom(self, decompressed=False):
+	def _check_file_dicom(self, decompressed: bool = False):
 		"""Checks if file is DICOM."""
 		path_to_file = self.path if not decompressed else self._decompressed_path
 		if is_dicom(path_to_file):
 			return True
 		return False
 
-	def _check_dir_dicom(self, decompressed=False):
+	def _check_dir_dicom(self, decompressed: bool = False):
 		"""Checks if directory contains any DICOM."""
 		path_to_dir = self.path if not decompressed else self._decompressed_path
 		for path_to_file in glob.glob(str(path_to_dir) + '**/**', recursive=True):
@@ -55,8 +76,8 @@ class Validator:
 		return False
 
 	def check(self) -> dict:
-		"""."""
-		if not self.compressed:
+		"""Checks whether input directory item is file vs dir, compressed or not, and is/has valid DICOM data in it."""
+		if not self.dir and not self.compressed:
 			dicom = self._check_file_dicom()
 		if self.dir:
 			dicom = self._check_dir_dicom()
