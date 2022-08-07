@@ -5,7 +5,6 @@ import json
 import shutil
 from pathlib import Path
 
-
 from . import package_config_path
 
 
