@@ -15,5 +15,8 @@ AccessionNumber
 StudyID
 StudyDate
 SeriesDate
+AcquisitionDate
+ContentDate
+InstanceCreationDate
 PerformingPhysicianName
 ReferringPhysicianName
