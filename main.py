@@ -6,6 +6,7 @@ from gooey import Gooey
 from gooey import GooeyParser
 
 from deidcm.utils import parse_log_config
+from deidcm.deidentifier import Deidentifier
 
 
 logging.config.dictConfig(parse_log_config())
@@ -28,21 +29,14 @@ def gui_generator() -> None:
         )
 
     parser.add_argument(
-        '-o', '--output_format',
+        '-b', '--bundled_output',
         metavar='Output Format',
         action='store_true',
         help='Check this box if you want to bundle all de-identified data in a separate "Deidentified" folder.')    
 
     args = parser.parse_args()
 
-    print(args)
-
-    #deidentifier = DICOMDeidentifier(args)
-    #deidentifier.run()
-
-
-class DICOMDeidentifier:
-	...
+    Deidentifier.create(args).run()
 
 
 if __name__ == '__main__':
