@@ -4,6 +4,7 @@ import glob
 import shutil
 import logging
 from pathlib import Path
+from collections import namedtuple
 
 from pydicom.misc import is_dicom
 
@@ -37,7 +38,7 @@ class Validator:
 	Methods
 	-------
 	check()
-		Evaluates input directory item. 
+		Evaluates input directory item and creates a namedtuple with its attributes. 
 	"""
 	def __init__(self, item_path: Path) -> None:
 		self.path = item_path
@@ -60,14 +61,14 @@ class Validator:
 		except (shutil.ReadError, ValueError):
 			return False
 
-	def _check_file_dicom(self, decompressed: bool = False):
+	def _check_file_dicom(self, decompressed: bool = False) -> bool:
 		"""Checks if file is DICOM."""
 		path_to_file = self.path if not decompressed else self._decompressed_path
 		if is_dicom(path_to_file):
 			return True
 		return False
 
-	def _check_dir_dicom(self, decompressed: bool = False):
+	def _check_dir_dicom(self, decompressed: bool = False) -> bool:
 		"""Checks if directory contains any DICOM."""
 		path_to_dir = self.path if not decompressed else self._decompressed_path
 		for path_to_file in glob.glob(str(path_to_dir) + '**/**', recursive=True):
@@ -75,8 +76,9 @@ class Validator:
 				return True
 		return False
 
-	def check(self) -> dict:
+	def check(self) -> namedtuple:
 		"""Checks whether input directory item is file vs dir, compressed or not, and is/has valid DICOM data in it."""
+		Item = namedtuple('Item', 'path dir compressed dicom')
 		if not self.dir and not self.compressed:
 			dicom = self._check_file_dicom()
 		if self.dir:
@@ -88,4 +90,4 @@ class Validator:
 			else:
 				dicom = self._check_dir_dicom(decompressed=True)
 			clean(self._decompressed_path)
-		return {'dir': self.dir, 'compressed': self.compressed, 'dicom': dicom}
+		return Item(self.path, self.dir, self.compressed, dicom)
