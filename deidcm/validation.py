@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import glob
 import shutil
 import logging
 from pathlib import Path
@@ -42,8 +43,17 @@ class Validator:
 			return True
 		return False
 
+	def _check_dir_dicom(self):
+		"""Checks if directory contains any DICOM."""
+		for path_to_file in glob.glob(str(self.path) + '**/**', recursive=True):
+			if Path(path_to_file).is_file() and is_dicom(path_to_file):
+				return True
+		return False
+
 	def check(self) -> dict:
 		"""."""
 		if not self.dir and not self.compressed:
 			dicom = self._check_file_dicom()
+		if self.dir:
+			dicom = self._check_dir_dicom()
 		return {'dir': self.dir, 'compressed': self.compressed, 'dicom': dicom}
