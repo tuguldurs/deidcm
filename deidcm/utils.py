@@ -10,8 +10,7 @@ from . import package_config_path
 
 def parse_log_config() -> dict:
 	"""Parses logging config."""
-	config_file = f'{package_config_path}/logger.json'
-	with open(config_file) as handler:
+	with open(f'{package_config_path}/logger.json') as handler:
 		configuration = json.load(handler)
 	return configuration
 
@@ -27,3 +26,10 @@ def clean(path_to_item: Path) -> None:
 def decompressed_path(compressed_path: Path) -> Path:
 	"""Parses path to decompressed file/dir, assuming compressed path ends with a file with extension."""
 	return Path('.'.join(str(compressed_path).split('\\')[-1].split('.')[:-1]))
+
+
+def parse_tag_config() -> list:
+	"""Parses tags to de-identify."""
+	with open(f'{package_config_path}/tags.txt', 'r') as handler:
+		lines = handler.readlines()
+	return [line.strip() for line in lines if line[0] != '#']
