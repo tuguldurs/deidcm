@@ -25,3 +25,7 @@ def clean(path_to_item: Path) -> None:
 		os.remove(path_to_item)
 	else:
 		shutil.rmtree(path_to_item)
+
+def decompressed_path(compressed_path: Path) -> Path:
+	"""Parses path to decompressed file/dir, assuming compressed path ends with a file with extension."""
+	return Path('.'.join(str(compressed_path).split('.')[:-1]))
