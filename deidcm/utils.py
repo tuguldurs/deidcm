@@ -34,11 +34,17 @@ def parse_tag_config() -> list:
 		lines = handler.readlines()
 	return [line.strip() for line in lines if line[0] != '#']
 
-def make_archive(source, destination):
-	base = os.path.basename(destination)
-	name = base.split('.')[0]
-	fmt = base.split('.')[1]
-	archive_from = os.path.dirname(source)
-	archive_to = os.path.basename(source.strip(os.sep))
-	shutil.make_archive(name, fmt, archive_from, archive_to)
-	shutil.move('%s.%s'%(name, fmt), destination)
+def clean_old_output(input_dir: Path) -> None:
+	"""Removed old output directories."""
+	paths = [Path('deidentified'), Path(f'{input_dir}/deidentified')]
+	for path_to_clean in paths:
+		if path_to_clean.is_dir():
+			shutil.rmtree(path_to_clean)
+
+def output_bundler(input_dir: Path) -> None:
+	"""Bundles outputs into a directory and move to input directory."""
+	os.mkdir('deidentified')
+	for item in os.listdir('.'):
+		if '_deidentified' in item:
+			shutil.move(item, 'deidentified')
+	shutil.move('deidentified', input_dir)
