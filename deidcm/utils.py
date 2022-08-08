@@ -20,7 +20,7 @@ def parse_log_config() -> dict:
 
 
 def clean(path_to_item: Path) -> None:
-	"""Deletes item, either file or dir."""
+	"""Deletes item at given path, either file or dir."""
 	if path_to_item.is_file():
 		os.remove(path_to_item)
 	else:

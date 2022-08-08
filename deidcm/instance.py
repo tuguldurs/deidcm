@@ -39,11 +39,6 @@ class Instance:
 			Parsed DICOM header including pixel data.
 		tag_name: str
 			Standard space-less tag name to be nulled.
-
-		Returns
-		-------
-		header: pydicom.FileDataSet
-			De-identified header.
 		"""
 		for elem in header:
 			if elem.VR == 'SQ':

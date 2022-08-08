@@ -23,7 +23,18 @@ __all__ = ['deidentifier']
 
 
 class Deidentifier:
-	"""..."""
+	"""
+	Driver class.
+
+	Methods
+	-------
+	create()
+		Creates deidentifier object with input args as attributes.
+	process()
+		Idetifies type of each input item and calls appropriate processing routines.
+	run()
+		Cleans any old output directories, and iterates processing through each item of input directory.
+	"""
 	
 	@classmethod
 	def create(cls, args: argparse.ArgumentParser) -> deidentifier:
@@ -50,8 +61,28 @@ class Deidentifier:
 			if Path(path_to_file).is_file() and is_dicom(path_to_file):
 				Instance(path_to_file).deidentify(self.skip_private_tags)
 
+	def _deidentify_compressed(self, item: str, item_path: Path) -> None:
+		"""Processes compressed files."""
+		fname, ext = os.path.splitext(item)
+		shutil.unpack_archive(item_path)
+		if Path(fname).is_file():
+			self._deidentify_file(fname, Path(fname))
+		else:
+			self._deidentify_dir(fname, Path(fname))
+		shutil.make_archive(f'{fname}_deidentified', ext[1:], f'{fname}_deidentified')
+		clean(Path(fname))
+		clean(Path(f'{fname}_deidentified'))
+
 	def process(self, item: str) -> None:
-		"""."""
+		"""Determined item type and calls individual processing methods for each type.
+
+		DICOMDIR file itself is skipped for dicom type.
+
+		Parameters
+		----------
+		item: str
+			Full file/dir name of processing item.
+		"""
 		item_path = Path(f'{self.input_directory}/{item}')
 		item_is = Validator(item_path).check()
 		if item == 'DICOMDIR':
@@ -63,15 +94,7 @@ class Deidentifier:
 			if item_is.dir:
 				self._deidentify_dir(item, item_path)
 			if item_is.compressed:
-				fname, ext = os.path.splitext(item)
-				shutil.unpack_archive(item_path)
-				if Path(fname).is_file():
-					self._deidentify_file(fname, Path(fname))
-				else:
-					self._deidentify_dir(fname, Path(fname))
-				shutil.make_archive(f'{fname}_deidentified', ext[1:], f'{fname}_deidentified')
-				clean(Path(fname))
-				clean(Path(f'{fname}_deidentified'))
+				self._deidentify_compressed(item, item_path)
 
 	def run(self) -> None:
 		"""Processes each item in input directory, and bundles the outputs if applicable."""
@@ -80,6 +103,6 @@ class Deidentifier:
 		log.info(f'processing {len(items)} items')
 		for item in tqdm(items, total=len(items)):
 			self.process(item)
-			log.info(f'{item} --- COMPLETE')
+			log.info(f'{item} <--- deidentified.')
 		if not self.no_bundled_output:
 			output_bundler(self.input_directory)
