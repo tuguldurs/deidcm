@@ -26,7 +26,9 @@ logging.config.dictConfig(parse_log_config())
 log = logging.getLogger(__name__)
 
 
-@Gooey(dump_build_config=False, program_name="DICOM De-Identifier Tool")
+@Gooey(dump_build_config=False, program_name="DICOM De-Identifier Tool", 
+    header_bg_color='#AFC151', body_bg_color='#E7E8D1', footer_bg_color='#AFC151', 
+    terminal_panel_color='#FCF6F5FF', terminal_font_color='#201E20')
 def generate_gui() -> None:
     """Generates minimal GUI, creates and runs deidentifier object with args."""
 

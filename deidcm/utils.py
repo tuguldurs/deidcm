@@ -45,7 +45,7 @@ def clean_old_output(input_dir: Path) -> None:
 	for path_to_clean in paths:
 		if path_to_clean.is_dir():
 			shutil.rmtree(path_to_clean)
-			log.info(f'old results removed at: {path_to_clean}')
+			log.info(f'old bundled results removed at: {path_to_clean}')
 
 
 def output_bundler(input_dir: Path) -> None:
@@ -55,4 +55,4 @@ def output_bundler(input_dir: Path) -> None:
 		if '_deidentified' in item:
 			shutil.move(item, 'deidentified')
 	shutil.move('deidentified', input_dir)
-	log.info(f'deidentified data ready at: {input_dir}/deidentified')
+	log.info(f'deidentified data ready at: {input_dir}\\deidentified')
