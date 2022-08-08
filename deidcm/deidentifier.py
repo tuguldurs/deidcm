@@ -11,6 +11,8 @@ from pydicom.misc import is_dicom
 
 from deidcm.validation import Validator
 from deidcm.instance import Instance
+from deidcm.utils import clean
+from deidcm.utils import make_archive
 
 
 log = logging.getLogger(__name__)
@@ -56,8 +58,15 @@ class Deidentifier:
 			if item_is.dir:
 				self._deidentify_dir(item, item_path)
 			if item_is.compressed:
-				...
-		#		self._process_compressed(item_path)
+				fname, ext = os.path.splitext(item)
+				shutil.unpack_archive(item_path)
+				if Path(fname).is_file():
+					self._deidentify_file(fname, Path(fname))
+				else:
+					self._deidentify_dir(fname, Path(fname))
+				shutil.make_archive(f'{fname}_deidentified', ext[1:], f'{fname}_deidentified')
+				clean(Path(fname))
+				clean(Path(f'{fname}_deidentified'))
 
 	def run(self) -> None:
 		"""Processes each item in input directory, and bundles the outputs if applicable."""

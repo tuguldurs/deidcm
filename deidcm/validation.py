@@ -8,8 +8,8 @@ from collections import namedtuple
 
 from pydicom.misc import is_dicom
 
-from .utils import clean
-from .utils import decompressed_path
+from deidcm.utils import clean
+from deidcm.utils import decompressed_path
 
 
 log = logging.getLogger(__name__)

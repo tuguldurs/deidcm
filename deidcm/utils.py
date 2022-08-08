@@ -33,3 +33,12 @@ def parse_tag_config() -> list:
 	with open(f'{package_config_path}/tags.txt', 'r') as handler:
 		lines = handler.readlines()
 	return [line.strip() for line in lines if line[0] != '#']
+
+def make_archive(source, destination):
+	base = os.path.basename(destination)
+	name = base.split('.')[0]
+	fmt = base.split('.')[1]
+	archive_from = os.path.dirname(source)
+	archive_to = os.path.basename(source.strip(os.sep))
+	shutil.make_archive(name, fmt, archive_from, archive_to)
+	shutil.move('%s.%s'%(name, fmt), destination)
