@@ -36,7 +36,7 @@ class Instance:
 		Parameters
 		----------
 		header: pydicom.FileDataSet
-			Parsed DICOM header excluding pixel data.
+			Parsed DICOM header including pixel data.
 		tag_name: str
 			Standard space-less tag name to be nulled.
 
@@ -47,7 +47,7 @@ class Instance:
 		"""
 		for elem in header:
 			if elem.VR == 'SQ':
-				[self._recursive_edit(item) for item in elem]
+				[self._recursive_edit(item, tag_name) for item in elem]
 			else:
 				if elem.tag == tag_name:
 					elem.value = ''
@@ -55,7 +55,7 @@ class Instance:
 
 	def deidentify(self) -> None:
 		"""Performs instance de-identification."""
-		with dcmread(self.path, stop_before_pixels=True) as header:
+		with dcmread(self.path) as header:
 			for tag in self.tags:
 				self._recursive_edit(header, tag)
 			header.save_as(self.path)
