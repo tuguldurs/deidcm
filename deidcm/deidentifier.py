@@ -31,23 +31,32 @@ class Deidentifier:
 		log.info(f'deidentifier object created to process: {cls.input_directory}')
 		return deidentifier
 
+	def _deidentify_file(self, full_file_name: str, item_path: Path) -> None:
+		"""Processes plain DICOM file."""
+		fname, ext = os.path.splitext(full_file_name)
+		dicom_path = Path(f'{fname}_deidentified{ext}')
+		shutil.copy(item_path, dicom_path)
+		Instance(dicom_path).deidentify()
+
+	def _deidentify_dir(self, dir_name: str, item_path: Path) -> None:
+		"""Processes directory containing DICOM data."""
+		dir_path = Path(f'{dir_name}_deidentified')
+		shutil.copytree(item_path, dir_path)
+		for path_to_file in glob.glob(str(dir_path) + '**/**', recursive=True):
+			if Path(path_to_file).is_file() and is_dicom(path_to_file):
+				Instance(path_to_file).deidentify()
+
 	def process(self, item: str) -> None:
 		"""."""
 		item_path = Path(f'{self.input_directory}/{item}')
 		item_is = Validator(item_path).check()
 		if item_is.dicom:
 			if not item_is.dir and not item_is.compressed:
-				fname, ext = os.path.splitext(item)
-				dicom_path = Path(f'{fname}_deidentified{ext}')
-				shutil.copy(item_path, dicom_path)
-				Instance(dicom_path).deidentify()
+				self._deidentify_file(item, item_path)				
 			if item_is.dir:
-				dir_path = Path(f'{item}_deidentified')
-				shutil.copytree(item_path, dir_path)
-				for path_to_file in glob.glob(str(dir_path) + '**/**', recursive=True):
-					if Path(path_to_file).is_file() and is_dicom(path_to_file):
-						Instance(path_to_file).deidentify()
-		#	if not item_is.dir and item_is.compressed:
+				self._deidentify_dir(item, item_path)
+			if item_is.compressed:
+				...
 		#		self._process_compressed(item_path)
 
 	def run(self) -> None:
