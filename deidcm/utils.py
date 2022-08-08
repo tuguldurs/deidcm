@@ -3,9 +3,13 @@ from __future__ import annotations
 import os
 import json
 import shutil
+import logging
 from pathlib import Path
 
 from . import package_config_path
+
+
+log = logging.getLogger(__name__)
 
 
 def parse_log_config() -> dict:
@@ -34,12 +38,15 @@ def parse_tag_config() -> list:
 		lines = handler.readlines()
 	return [line.strip() for line in lines if line[0] != '#']
 
+
 def clean_old_output(input_dir: Path) -> None:
 	"""Removed old output directories."""
 	paths = [Path('deidentified'), Path(f'{input_dir}/deidentified')]
 	for path_to_clean in paths:
 		if path_to_clean.is_dir():
 			shutil.rmtree(path_to_clean)
+			log.info(f'old results removed at: {path_to_clean}')
+
 
 def output_bundler(input_dir: Path) -> None:
 	"""Bundles outputs into a directory and move to input directory."""
@@ -48,3 +55,4 @@ def output_bundler(input_dir: Path) -> None:
 		if '_deidentified' in item:
 			shutil.move(item, 'deidentified')
 	shutil.move('deidentified', input_dir)
+	log.info(f'deidentified data ready at: {input_dir}/deidentified')

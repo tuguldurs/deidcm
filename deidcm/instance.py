@@ -30,7 +30,7 @@ class Instance:
 		self.path = dicom_path
 		self.tags = parse_tag_config()
 
-	def _recursive_edit(self, header: pydicom.FileDataSet, tag_name: str) -> pydicom.FileDataSet:
+	def _recursive_edit(self, header: pydicom.FileDataSet, tag_name: str) -> None:
 		"""Recursively edits inplace all occurences of given tag value.
 
 		Parameters
@@ -51,11 +51,25 @@ class Instance:
 			else:
 				if elem.tag == tag_name:
 					elem.value = ''
-		return header
 
-	def deidentify(self) -> None:
-		"""Performs instance de-identification."""
+	def _private_edit(self, header: pydicom.FileDataSet) -> None:
+		"""Nulls all private tag values in place."""
+		for elem in header:
+			if elem.tag.group % 2 != 0:
+				elem.value = ''
+
+	def deidentify(self, priv_tag_flag: bool) -> None:
+		"""Performs instance de-identification.
+
+		Parameters
+		----------
+		priv_tag_flag: bool
+			If true all private tags are untouched. If false all of them nulled.
+		"""
 		with dcmread(self.path) as header:
+			log.info(f'---> {self.path}')
 			for tag in self.tags:
 				self._recursive_edit(header, tag)
+			if not priv_tag_flag:
+				self._private_edit(header)
 			header.save_as(self.path)

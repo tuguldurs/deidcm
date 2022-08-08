@@ -49,8 +49,8 @@ class Validator:
 	def _get_compressed(self) -> bool:
 		"""Checks if item is a compressed file.
 
-		ReadError is raised when its not a compressed file.
-		ValueError should raise if it does not contain any of the supported extensions.
+		ReadError raised when its not a compressed file.
+		ValueError raised when it does not contain any of the supported extensions.
 		"""
 		if self.dir:
 			return False
