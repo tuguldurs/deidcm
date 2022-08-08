@@ -43,6 +43,12 @@ def generate_gui() -> None:
         )
 
     parser.add_argument(
+        '-p', '--skip_private_tags',
+        metavar='Private Tags',
+        action='store_true',
+        help='Check this box if you do not want to edit any private tags.')
+
+    parser.add_argument(
         '-b', '--no_bundled_output',
         metavar='Output Format',
         action='store_true',
