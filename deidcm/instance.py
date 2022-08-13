@@ -45,7 +45,8 @@ class Instance:
 				[self._recursive_edit(item, tag_name) for item in elem]
 			else:
 				if elem.tag == tag_name:
-					elem.value = ''
+					#elem.value = b'xyz'
+					del header[elem.tag]
 
 	def _private_edit(self, header: pydicom.FileDataSet) -> None:
 		"""Nulls all private tag values in place."""
@@ -66,5 +67,5 @@ class Instance:
 			for tag in self.tags:
 				self._recursive_edit(header, tag)
 			if not priv_tag_flag:
-				self._private_edit(header)
+				header.remove_private_tags()
 			header.save_as(self.path)
