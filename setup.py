@@ -8,7 +8,8 @@ setup(
         'tqdm>=4.62',
         'pydicom==2.3.0',
         'pyinstaller>=4.8',
-        'gooey>=1.0.8'
+        'gooey>=1.0.8',
+        'names==0.3.0'
     ],
     python_requires='>=3.9',
 )
