@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 import glob
 import shutil
+import hashlib
 import logging
 from pathlib import Path
 
@@ -53,13 +54,30 @@ class Deidentifier:
 		shutil.copy(item_path, dicom_path)
 		Instance(dicom_path).deidentify(self.skip_private_tags)
 
-	def _deidentify_dir(self, dir_name: str, item_path: Path) -> None:
+	def _get_hash(self, somestring: str) -> str:
+		"""Sha256 hash value."""
+		h = hashlib.new('sha256')
+		h.update(somestring.encode())
+		return h.hexdigest()
+
+	def _deidentify_dir(self, dir_name: str, item_path: Path) -> str:
 		"""Processes directory containing DICOM data."""
+		dir_name = self._get_hash(dir_name)
 		dir_path = Path(f'{dir_name}_deidentified')
 		shutil.copytree(item_path, dir_path)
+
+		for item in os.listdir(dir_path):
+			subitem_path = Path(f'{dir_path}/{item}')
+			if subitem_path.is_dir():
+				subitem_is = Validator(subitem_path).check()
+				if subitem_is.dicom:
+					new_name = self._get_hash(item)
+					shutil.move(subitem_path, f'{dir_path}/{new_name}')
+		
 		for path_to_file in glob.glob(str(dir_path) + '**/**', recursive=True):
 			if Path(path_to_file).is_file() and is_dicom(path_to_file):
 				Instance(path_to_file).deidentify(self.skip_private_tags)
+		return dir_name
 
 	def _deidentify_compressed(self, item: str, item_path: Path) -> None:
 		"""Processes compressed files."""
@@ -68,10 +86,10 @@ class Deidentifier:
 		if Path(fname).is_file():
 			self._deidentify_file(fname, Path(fname))
 		else:
-			self._deidentify_dir(fname, Path(fname))
-		shutil.make_archive(f'{fname}_deidentified', ext[1:], f'{fname}_deidentified')
+			new_name = self._deidentify_dir(fname, Path(fname))
+		shutil.make_archive(f'{new_name}_deidentified', ext[1:], f'{new_name}_deidentified')
 		clean(Path(fname))
-		clean(Path(f'{fname}_deidentified'))
+		clean(Path(f'{new_name}_deidentified'))
 
 	def process(self, item: str) -> None:
 		"""Determined item type and calls individual processing methods for each type.
