@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 import glob
 import shutil
+import base64
 import hashlib
 import logging
 from pathlib import Path
@@ -54,15 +55,19 @@ class Deidentifier:
 		shutil.copy(item_path, dicom_path)
 		Instance(dicom_path).deidentify(self.skip_private_tags)
 
-	def _get_hash(self, somestring: str) -> str:
+	def _get_hash_oneway(self, somestring: str) -> str:
 		"""Sha256 hash value."""
 		h = hashlib.new('sha256')
 		h.update(somestring.encode())
 		return h.hexdigest()
 
+	def _get_encode(self, somestring: str) -> str:
+		"""Base64 encoding."""
+		return base64.b64encode(somestring.encode('ascii')).decode('ascii')
+
 	def _deidentify_dir(self, dir_name: str, item_path: Path) -> str:
 		"""Processes directory containing DICOM data."""
-		dir_name = self._get_hash(dir_name)
+		#dir_name = self._get_encode(dir_name)
 		dir_path = Path(f'{dir_name}_deidentified')
 		shutil.copytree(item_path, dir_path)
 
@@ -71,7 +76,7 @@ class Deidentifier:
 			if subitem_path.is_dir():
 				subitem_is = Validator(subitem_path).check()
 				if subitem_is.dicom:
-					new_name = self._get_hash(item)
+					new_name = self._get_encode(item)
 					shutil.move(subitem_path, f'{dir_path}/{new_name}')
 		
 		for path_to_file in glob.glob(str(dir_path) + '**/**', recursive=True):
