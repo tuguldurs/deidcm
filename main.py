@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import logging.config
 
 from gooey import Gooey
@@ -62,4 +63,12 @@ def generate_gui() -> None:
 
 
 if __name__ == '__main__':
-	generate_gui()
+	#generate_gui()
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-i', '--InputDirectory', required=True)
+    parser.add_argument('-p', '--skip_private_tags', action='store_true')
+    parser.add_argument('-o', '--no_bundled_output', action='store_true')
+    args = parser.parse_args()
+
+    Deidentifier.create(args).run()
