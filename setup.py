@@ -7,7 +7,8 @@ setup(
     install_requires=[
         'tqdm>=4.62',
         'pydicom==2.3.0',
-        'boto3>=1.24'
+        'boto3>=1.24',
+        'PyMuPDF>=1.20'
     ],
     python_requires='>=3.7.10',
 )
