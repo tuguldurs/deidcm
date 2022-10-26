@@ -50,7 +50,7 @@ def main(in_bucket, out_bucket):
         shutil.make_archive(f'tmp/deidentified/{dirname}', 'zip', f'tmp/deidentified/{dirname}')
 
         print('uploading...')
-        out_bucket.upload_file(f'tmp/deidentified/{dirname}.zip', f'tmp/deidentified/{dirname}.zip')
+        out_bucket.upload_file(f'tmp/deidentified/{dirname}.zip', f'{dirname}.zip')
         out_bucket.upload_file(redacted_name, redacted_name)
 
         print('cleaning...')
@@ -59,7 +59,7 @@ def main(in_bucket, out_bucket):
             if fname.endswith('.pdf') or fname.endswith('.zip'):
                 Path(fname).unlink()
 
-        print(f'---> done ({idx+1}/{len(studies)}')
+        print(f'---> done ({idx+1}/{len(studies)})')
 
 
 if __name__ == '__main__':
