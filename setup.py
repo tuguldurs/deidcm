@@ -9,7 +9,8 @@ setup(
         'pydicom==2.3.0',
         'pyinstaller>=4.8',
         'gooey>=1.0.8',
-        'names==0.3.0'
+        'names==0.3.0',
+        'boto3>=1.24'
     ],
     python_requires='>=3.9',
 )
