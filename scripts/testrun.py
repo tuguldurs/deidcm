@@ -39,6 +39,7 @@ def main(in_bucket, out_bucket):
             shutil.rmtree('tmp')
         os.mkdir('tmp')
         shutil.unpack_archive('dcm.zip', extract_dir='tmp')
+        shutil.rmtee('dcm.zip')
 
         print('deidentifying DICOM and SF')
         deidentifier.run()
