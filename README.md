@@ -1,6 +1,6 @@
 # Custom DICOM de-identification tool
 
-This package de-identifies DICOM data through `keep-list` method, e.g., by removing all tags not included in the list. The package scans every file in the input directory and creates de-identified copies. The input directory may contain any combination of formats, e.g., plain `.dcm` instances, series, studies either in DICOMDIR format or plain DICOM directory structure, or as a compressed `.zip` file.
+This package de-identifies DICOM header data through `keep-list` method, e.g., by removing all tags not included in the specified list. The package scans every file in the input directory and creates de-identified copies. The input directory may contain any combination of formats, e.g., plain `.dcm` instances, series, studies either in DICOMDIR format or plain DICOM directory structure, or as a compressed `.zip` file.
 
 
 ## Setup
