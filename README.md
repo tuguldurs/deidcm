@@ -49,7 +49,7 @@ The `Deidentifier` class requires 3 arguments:
 
 These arguments can be supplies e.g., using argparse or namedtuples to create an instance of `Deidentifier class`. Once the class is instantiated call the `run()` method to start, for example:
 
-````python
+```python
 from collections import namedtuple
 
 from deidcm import Deidentifier
