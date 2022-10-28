@@ -70,18 +70,18 @@ my_directory/
 	├── some_instance.dcm        <- stand-alone instance
 	├── compressed_study.zip     <- compressed DICOM data
 	└── sample_series/           <- stand-alone series
-			├── instance1.dcm
-			├── instance2.dcm
-			└── instance3.dcm
+		├── instance1.dcm
+		├── instance2.dcm
+		└── instance3.dcm
 	└── some_patient/            <- study in DICOMDIR format
     		├── DICOMDIR
     		└── some_study/
-    				└── series1/
-    						├── s1_instance1.dcm
-    						└── s1_instance2.dcm
-    				└── series2
-    						├── s2_instance1.dcm
-    						└── s2_instance2.dcm
+    			└── series1/
+    				├── s1_instance1.dcm
+    				└── s1_instance2.dcm
+    			└── series2
+    				├── s2_instance1.dcm
+    				└── s2_instance2.dcm
 ```
 After processing it will look like following:
 
@@ -95,10 +95,7 @@ my_directory/
 	├── some_image.png
 	├── some_instance.dcm
 	├── compressed_study.zip
-	└── sample_series/
-			├── instance1.dcm
-			├── instance2.dcm
-			└── instance3.dcm
+	├── sample_series/
 	└── some_patient/
 ```
 All the original data are retained and all de-identified copies of DICOM data are bunled inside `my_directory/deidentified/`.
