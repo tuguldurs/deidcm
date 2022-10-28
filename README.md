@@ -73,7 +73,7 @@ my_directory/
 			├── instance1.dcm
 			├── instance2.dcm
 			└── instance3.dcm
-    └── some_patient/            <- study in DICOMDIR format
+	└── some_patient/            <- study in DICOMDIR format
     		├── DICOMDIR
     		└── some_study/
     				└── series1/
@@ -99,7 +99,7 @@ my_directory/
 			├── instance1.dcm
 			├── instance2.dcm
 			└── instance3.dcm
-    └── some_patient/
+	└── some_patient/
 ```
 All the original data are retained and all de-identified copies of DICOM data are bunled inside `my_directory/deidentified/`.
 
