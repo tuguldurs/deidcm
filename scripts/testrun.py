@@ -68,7 +68,9 @@ if __name__ == '__main__':
     parser.add_argument('-o', '--output_bucket', type=str, required=True, help='output s3 bucket name')
     args = parser.parse_args()
 
-    resource = boto3.resource('s3')
+    session = boto3.session.Session(profile_name='default')
+    resource = session.resource('s3')
+    #resource = boto3.resource('s3')
     in_bucket = resource.Bucket(args.input_bucket)
     out_bucket = resource.Bucket(args.output_bucket)
     main(in_bucket, out_bucket)
