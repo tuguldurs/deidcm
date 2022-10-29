@@ -1,6 +1,7 @@
 #
 # List of standard DICOM tag names to keep
 #
+Modality
 ImageType
 SOPClassUID
 SOPInstanceUID
