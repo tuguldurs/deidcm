@@ -34,7 +34,7 @@ class Deidentifier:
 	create()
 		Creates deidentifier object with input args as attributes.
 	process()
-		Idetifies type of each input item and calls appropriate processing routines.
+		Identifies type of each input item and calls appropriate processing routines.
 	run()
 		Cleans any old output directories, and iterates processing through each item of input directory.
 	"""
