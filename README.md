@@ -44,10 +44,10 @@ and install the package with `pip`:
 
 The `Deidentifier` class requires 3 arguments:
 - `InputDirectory` - path to directory containing raw DICOM data
-- `skip_private_tags` - boolean that specifies whether to remove private tags. When `False` all private tags will be removed, and when `False` they will be left untouched.
-- `no_bundled_output` - boolean that specifies whether to bunle de-identified copies into one place. When `False` all de-identified copies will be written in a sub-directory named `deidentified/` that lives inside the `InputDirectory`, and when `False` all de-identified copies will be written in the working directory.
+- `skip_private_tags` - boolean that specifies whether to remove private tags. When `False` all private tags will be removed, and when `True` they will be left untouched.
+- `no_bundled_output` - boolean that specifies whether to bundle de-identified copies into one place. When `False` all de-identified copies will be written in a sub-directory named `deidentified/` that lives inside the `InputDirectory`, and when `False` all de-identified copies will be written in the working directory.
 
-These arguments can be supplies e.g., using argparse or namedtuples to create an instance of `Deidentifier class`. Once the class is instantiated call the `run()` method to start, for example:
+These arguments can be supplied e.g., using argparse or namedtuple to create an instance of `Deidentifier` class. Once the class is instantiated call the `run()` method to start, for example:
 
 ```python
 from collections import namedtuple
@@ -98,9 +98,13 @@ my_directory/
 	├── sample_series/
 	└── some_patient/
 ```
-All the original data are retained and all de-identified copies of DICOM data are bunled inside `my_directory/deidentified/`.
+All original data are retained and all de-identified copies of DICOM data are bunled inside `my_directory/deidentified/`.
 
-The `keep-list` tags are listed in `configs/tags.txt`. Any of the base-level standard tags can be included:
+## De-identification
+
+Every input file is checked by the package for the existense of 128-byte long preamble followed by `DICM` magic keyword, to determine whether it is a DICOM instance. 
+For regular instances the de-identification is performed on a `keep-list` mode, where all base level tags (excluding header meta) are removed entirely except that 
+are specified to be kept. The `keep-list` tags are listed in `configs/keep_tags.txt`, and can be modified to include any of the base-level standard tags:
 
 ```text
 #
@@ -116,7 +120,33 @@ PatientOrientation
 ImageOrientationPatient
 ...
 ```
-The tags are not required to be present in the instances, e.g. if the tag does not exist the processing will just skip it and continue.
+The tags are not required to be present in the instances, e.g. if the tag does not exist the processing will just skip and continue to check for the next tag.
+
+For DICOMDIR files, the de-identification is performed on a `redact` mode, where all PHI containing tags are redacted into `0`s. Specifically the first two records, 
+`PATIENT` and `STUDY`, are searched for potentially sensitive tags and redacted. The redaction applies the same number of `0` charactecters as the tag's original 
+value, so that the native byte offsets among records are kept intact. The `redact-list` tags are listed in `configs/redact_tags.txt`, and can also be modified to include 
+any other base level standard tags:
+
+```text
+#
+# List of standard DICOM tag names to redact with 0s
+# (used only for DICOMDIR)
+#
+PatientName
+PatientAge
+PatientBirthDate
+PatientSex
+PatientID
+PhysicianName
+PhysiciansOfRecord
+InstitutionName
+InstitutionAddress
+AccessionNumber
+StudyDate
+StudyTime
+StudyID
+...
+```
 
 
 ## Selection Form Redaction
