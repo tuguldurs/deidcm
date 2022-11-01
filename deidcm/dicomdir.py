@@ -15,8 +15,12 @@ class DicomDir:
 	"""Deidentifies a given DICOMDIR instance file.
 
 	Unlike regular DICOM instances, the DICOMDIR file does not contain any PHI in its 
-	base level tags. However some PHI tags can be listed in the top sections of 
-	Directory Record Seqeuence. All existing PHI tags are removed entirely within the sequence.
+	base level tags. However some PHI tags can be listed in the top records of 
+	Directory Record Seqeuence. All existing PHI tags are entirely redacted within the sequence
+
+	The redaction applies same character length string but consisting from only 0s, e.g.:
+	"JOHN" becomes "0000".
+
 
 	Attributes
 	----------
@@ -34,22 +38,26 @@ class DicomDir:
 		self.path = dicom_path
 		self.tags = parse_tag_config('remove')
 
-	def _remove_tags(self, header: pydicom.FileDataSet) -> None:
-		"""Removes PHI tags within the first two members of (0004, 1220) sequence.
+	def _redact_tags(self, header: pydicom.FileDataSet) -> None:
+		"""Redacts PHI tags within the first two records of (0004, 1220) sequence.
+
+		Record#1: PATIENT
+		Record#2: STUDY
 
 		Parameters
 		----------
 		header: pydicom.FileDataSet
 			Parsed DICOMDIR header.
 		"""
-		for member in range(2):
-			for elem in header[0x0004, 0x1220][member]:
+		for record in range(2):
+			for elem in header[0x0004, 0x1220][record]:
 				if elem.tag in self.tags:
-					del header[0x0004, 0x1220][member][elem.tag]
+					log.info(f'redacting {elem.tag} in record {record+1}')
+					elem.value = '0' * len(elem.value)
 
-	def deidentify(self, priv_tag_flag: bool) -> None:
+	def deidentify(self) -> None:
 		"""Performs DICOMDIR de-identification."""
 		with dcmread(self.path) as header:
 			log.info(f'---> {self.path}')
-			self._remove_tags(header)
+			self._redact_tags(header)
 			header.save_as(self.path)

@@ -87,6 +87,9 @@ class Deidentifier:
 					shutil.move(subitem_path, f'{dir_path}/{new_name}')
 		
 		for path_to_file in glob.glob(str(dir_path) + '**/**', recursive=True):
+			if path_to_file.split('/')[-1] == 'DICOMDIR':
+				DicomDir(path_to_file).deidentify()
+				continue
 			if Path(path_to_file).is_file() and is_dicom(path_to_file):
 				Instance(path_to_file).deidentify(self.skip_private_tags)
 		return dir_name
