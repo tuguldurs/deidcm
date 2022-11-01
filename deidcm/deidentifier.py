@@ -48,6 +48,12 @@ class Deidentifier:
 		log.info(f'deidentifier object created to process: {cls.input_directory}')
 		return deidentifier
 
+	def _deidentify_dicomdir(self, item_path) -> None:
+		"""Process DICOMDIR file."""
+		dicom_path = Path('DICOMDIR')
+		shutil.copy(item_path, dicom_path)
+		DicomDir(dicom_path).deidentify()
+
 	def _deidentify_file(self, full_file_name: str, item_path: Path) -> None:
 		"""Processes plain DICOM file."""
 		fname, ext = os.path.splitext(full_file_name)
@@ -99,7 +105,7 @@ class Deidentifier:
 	def process(self, item: str) -> None:
 		"""Determined item type and calls individual processing methods for each type.
 
-		DICOMDIR file itself is skipped for dicom type.
+		DICOMDIR file is processed separately.
 
 		Parameters
 		----------
@@ -109,7 +115,10 @@ class Deidentifier:
 		item_path = Path(f'{self.input_directory}/{item}')
 		item_is = Validator(item_path).check()
 		if item == 'DICOMDIR':
-			item_is.dicom = False
+			item_is.dicom = True
+			log.info(f'{item} --- {item_is}')
+			self._deidentify_dicomdir(item_path)
+			return
 		log.info(f'{item} --- {item_is}')
 		if item_is.dicom:
 			if not item_is.dir and not item_is.compressed:
