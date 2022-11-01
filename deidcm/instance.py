@@ -28,7 +28,7 @@ class Instance:
 	"""
 	def __init__(self, dicom_path: Path) -> None:
 		self.path = dicom_path
-		self.tags = parse_tag_config()
+		self.tags = parse_tag_config('keep')
 
 	def _filter_tags(self, header: pydicom.FileDataSet) -> None:
 		"""Filters base level tags and removes if it does not exist in keep-list.
