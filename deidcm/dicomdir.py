@@ -15,8 +15,8 @@ class DicomDir:
 	"""Deidentifies a given DICOMDIR instance file.
 
 	Unlike regular DICOM instances, the DICOMDIR file does not contain any PHI in its 
-	base level tags. However some PHI tags can be listed in the top section of 
-	Directory Record Seqeuence. All existing PHI tags are removed entirely.
+	base level tags. However some PHI tags can be listed in the top sections of 
+	Directory Record Seqeuence. All existing PHI tags are removed entirely within the sequence.
 
 	Attributes
 	----------
