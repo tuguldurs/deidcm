@@ -32,7 +32,7 @@ class DicomDir:
 	"""
 	def __init__(self, dicom_path: Path) -> None:
 		self.path = dicom_path
-		self.tags = parse_tag_config()
+		self.tags = parse_tag_config('remove')
 
 	def _remove_tags(self, header: pydicom.FileDataSet) -> None:
 		"""Removes PHI tags within the first two members of (0004, 1220) sequence.
