@@ -1,0 +1,17 @@
+#
+# List of standard DICOM tag names to remove
+# (only used for DICOMDIR files)
+#
+PatientName
+PatientAge
+PatientBirthDate
+PatientSex
+PatientID
+PhysicianName
+PhysiciansOfRecord
+InstitutionName
+InstitutionAddress
+AccessionNumber
+StudyDate
+StudyTime
+StudyID
