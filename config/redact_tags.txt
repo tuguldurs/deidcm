@@ -1,6 +1,6 @@
 #
-# List of standard DICOM tag names to remove
-# (only used for DICOMDIR files)
+# List of standard DICOM tag names to redact with 0s
+# (used only for DICOMDIR)
 #
 PatientName
 PatientAge
