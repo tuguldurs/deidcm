@@ -13,6 +13,7 @@ from pydicom.misc import is_dicom
 
 from deidcm.validation import Validator
 from deidcm.instance import Instance
+from deidcm.dicomdir import DicomDir
 from deidcm.utils import clean
 from deidcm.utils import clean_old_output
 from deidcm.utils import output_bundler
