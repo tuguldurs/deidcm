@@ -32,9 +32,9 @@ def decompressed_path(compressed_path: Path) -> Path:
 	return Path('.'.join(str(compressed_path).split('\\')[-1].split('.')[:-1]))
 
 
-def parse_tag_config() -> list:
+def parse_tag_config(listname: str) -> list:
 	"""Parses tags to de-identify."""
-	with open(f'{package_config_path}/tags.txt', 'r') as handler:
+	with open(f'{package_config_path}/{listname}_tags.txt', 'r') as handler:
 		lines = handler.readlines()
 	return [line.strip() for line in lines if line[0] != '#']
 
