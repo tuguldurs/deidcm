@@ -22,6 +22,8 @@ args = namedtuple('args', 'InputDirectory skip_private_tags no_bundled_output')
 args = args('tmp', False, False)
 deidentifier = Deidentifier.create(args)
 
+parent = 'tmp/deidentified'
+
 
 def main(in_bucket, out_bucket):
     with open(package_data_path / 'gore.json', 'r') as f:
@@ -55,12 +57,13 @@ def main(in_bucket, out_bucket):
         SfRedactor('sf.pdf').redact(redacted_name)
 
         log.info('packing deidentified study')
-        dirname = [item for item in os.listdir('tmp/deidentified') if '_deidentified' in item][0]
-        shutil.move(f'tmp/deidentified/{dirname}', f'tmp/deidentified/{study_id}_deidentified')
-        shutil.make_archive(f'tmp/deidentified/{study_id}_deidentified', 'zip', f'tmp/deidentified/{study_id}_deidentified')
+        dirname = [item for item in os.listdir(parent) if '_deidentified' in item][0]
+        deidentified_name = f'{study_id}_deidentified'
+        shutil.move(f'{parent}/{dirname}', f'{parent}/{deidentified_name}')
+        shutil.make_archive(f'{parent}/{deidentified_name}', 'zip', f'{parent}/{deidentified_name}')
 
         log.info('uploading...')
-        out_bucket.upload_file(f'tmp/deidentified/{study_id}_deidentified.zip', f'{study_id}_deidentified.zip')
+        out_bucket.upload_file(f'{parent}/{deidentified_name}.zip', f'{deidentified_name}.zip')
         out_bucket.upload_file(redacted_name, redacted_name)
 
         log.info('cleaning...')
