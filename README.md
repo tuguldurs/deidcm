@@ -73,7 +73,7 @@ my_directory/
 		├── instance1.dcm
 		├── instance2.dcm
 		├── instance3.dcm
-		└── some_data.txt      <- non-DICOM file (will be copied over)
+		└── some_data.txt   <- non-DICOM file (will be copied over)
 	└── some_patient/            <- study in DICOMDIR format
     		├── DICOMDIR
     		└── some_study/
