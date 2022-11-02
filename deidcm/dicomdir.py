@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import warnings
 from pathlib import Path
 
 from pydicom import dcmread
@@ -54,7 +55,9 @@ class DicomDir:
 			for elem in header[0x0004, 0x1220][record]:
 				if elem.tag in self.tags:
 					log.info(f'redacting {elem.tag} in record {record+1}')
-					elem.value = '0' * len(elem.value)
+					with warnings.catch_warnings():
+						warnings.simplefilter("ignore")
+						elem.value = '0' * len(elem.value)
 
 	def deidentify(self) -> None:
 		"""Performs DICOMDIR de-identification."""
