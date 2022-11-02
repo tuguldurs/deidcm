@@ -172,6 +172,8 @@ from sfredact import SfRedactor
 SfRedactor('my_sf.pdf').redact('my_sf_redacted.pdf')
 ```
 
-Three different document version are covered, and in each case the redaction script patches a black-rectangle over the first table contents. The patches are proper 
+Three different document versions are covered, and in each case the redaction script patches a black-rectangle over the first table contents. The patches are proper 
 redactions and not just overlays, and therefore the original text data cannot be "copied" as an underlying text.
+
+
 *Note*: The redaction also removes all other pages except the first one in the redacted copy.
