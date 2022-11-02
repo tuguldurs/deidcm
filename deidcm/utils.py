@@ -55,4 +55,4 @@ def output_bundler(input_dir: Path) -> None:
 		if '_deidentified' in item:
 			shutil.move(item, 'deidentified')
 	shutil.move('deidentified', input_dir)
-	log.info(f'deidentified data ready at: {input_dir}\\deidentified')
+	log.info(f'deidentified data ready at: {input_dir}/deidentified')
