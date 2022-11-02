@@ -29,8 +29,9 @@ def main(in_bucket, out_bucket):
     with open(package_data_path / 'gore.json', 'r') as f:
         studies = json.load(f)
 
-    #studies = [studies[0], studies[4]]
-    studies = [studies[150]]
+    # local
+    #studies = [studies[4], studies[8], studies[150]]
+    studies = studies[5:10]
 
 
     log.info(f'this script will process {len(studies)} studies')
@@ -41,6 +42,7 @@ def main(in_bucket, out_bucket):
         log.info(f'   SF: {study["SF"]}')
         study_id = study["SF"].split("/")[-1].replace('.pdf', '')
         log.info(f'study ID = {study_id}')
+        study_id = f'study{idx:03}'
 
         log.info(f'downloading study...')
         in_bucket.download_file(study['DICOM'], 'dcm.zip')
@@ -55,17 +57,16 @@ def main(in_bucket, out_bucket):
 
         log.info('deidentifying DICOM and SF')
         deidentifier.run()
-        redacted_name = f'{study_id}_redacted.pdf'
+        redacted_name = f'{study_id}.pdf'
         SfRedactor('sf.pdf').redact(redacted_name)
 
         log.info('packing deidentified study')
         dirname = [item for item in os.listdir(parent) if '_deidentified' in item][0]
-        deidentified_name = f'{study_id}_deidentified'
-        shutil.move(f'{parent}/{dirname}', f'{parent}/{deidentified_name}')
-        shutil.make_archive(f'{parent}/{deidentified_name}', 'zip', f'{parent}/{deidentified_name}')
+        shutil.move(f'{parent}/{dirname}', f'{parent}/{study_id}')
+        shutil.make_archive(f'{parent}/{study_id}', 'zip', f'{parent}/{study_id}')
 
         log.info('uploading...')
-        out_bucket.upload_file(f'{parent}/{deidentified_name}.zip', f'{deidentified_name}.zip')
+        out_bucket.upload_file(f'{parent}/{study_id}.zip', f'{study_id}.zip')
         out_bucket.upload_file(redacted_name, redacted_name)
 
         log.info('cleaning...')
