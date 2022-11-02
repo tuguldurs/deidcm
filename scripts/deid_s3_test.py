@@ -29,7 +29,9 @@ def main(in_bucket, out_bucket):
     with open(package_data_path / 'gore.json', 'r') as f:
         studies = json.load(f)
 
-    studies = [studies[0], studies[-1]]
+    #studies = [studies[0], studies[4]]
+    studies = [studies[150]]
+
 
     log.info(f'this script will process {len(studies)} studies')
 
