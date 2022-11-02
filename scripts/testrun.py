@@ -28,6 +28,7 @@ def main(in_bucket, out_bucket):
         print(f'processing study - ')
         print(f'DICOM: {study["DICOM"]}')
         print(f'   SF: {study["SF"]}')
+        study = study["SF"].split("/")[-1].replace('.pdf', '')
 
         print(f'downloading study...')
         in_bucket.download_file(study['DICOM'], 'dcm.zip')
@@ -47,7 +48,8 @@ def main(in_bucket, out_bucket):
 
         print('packing deidentified study')
         dirname = [item for item in os.listdir('tmp/deidentified') if '_deidentified' in item][0]
-        shutil.make_archive(f'tmp/deidentified/{dirname}', 'zip', f'tmp/deidentified/{dirname}')
+        shutil.move(f'tmp/deidentified/{dirname}', f'tmp/deidentified/{study}')
+        shutil.make_archive(f'tmp/deidentified/{study}', 'zip', f'tmp/deidentified/{study}')
 
         print('uploading...')
         out_bucket.upload_file(f'tmp/deidentified/{dirname}.zip', f'{dirname}.zip')
